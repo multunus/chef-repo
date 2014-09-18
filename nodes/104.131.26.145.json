@@ -1,0 +1,57 @@
+{
+    "run_list": [
+        "role[postgresql]",
+        "role[rails_passenger]",
+	"recipe[newrelic]"
+    ],
+    "postgresql": {
+        "password": {
+            "postgres": "< postgres_password >"
+        }
+    },
+    "authorization": {
+        "sudo": {
+            "users": [
+                "deploy"
+            ]
+        }
+    },
+    "newrelic":{
+        "license_key" : "< new_relic_license_key >"
+    },
+    "ssh_deploy_keys": [
+        " ssh_public_key for easy deployment "
+    ],
+    "rails": {
+        "applications_root": "/home/deploy"
+    },
+    "active_applications": {
+        "< application_name >": {
+            "rails_env": "staging",
+            "packages": [
+                "nodejs",
+                "imagemagick",
+                "libmagickwand-dev",
+                "postgresql-contrib",
+                "texlive-binaries",
+                "texlive-extra-utils",
+                "librsvg2-bin"
+            ],
+            "ssl_info": {
+                "crt": "",
+                "key": "" 
+            },
+            "domain_names": [
+                "< domain_name >"
+            ],
+            "ruby_version": "< ruby version to install >",
+            "database_info": {
+                "adapter": "< database_adapter >",
+                "host": "localhost",
+                "username": "< database_username >",
+                "password": "< database_password >",
+                "database": "< database_name >"
+            }
+        }
+    }
+}

@@ -32,8 +32,13 @@ if node[:active_applications]
           user 'postgres'
           command psql
           returns [0,1]
+        end        
+        execute "create hstore for template1" do
+          user 'postgres'
+          psql = "psql -d template1 -c 'create extension hstore'"
+          command psql
+          returns [0,1]
         end
- 
         execute "create-database" do
           user 'postgres'
           command "createdb -U postgres -O #{database_username} #{database_name}"

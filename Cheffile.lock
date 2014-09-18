@@ -42,6 +42,7 @@ SITE
       yum-epel (>= 0.0.0)
     mysql (5.3.6)
       yum-mysql-community (>= 0.0.0)
+    newrelic (0.3.2)
     nginx (2.7.4)
       apt (~> 2.2)
       bluepill (~> 2.3)
@@ -89,6 +90,7 @@ PATH
 DEPENDENCIES
   apt (~> 2.5.2)
   mysql (~> 5.3.6)
+  newrelic (= 0.3.2)
   nginx (~> 2.7.4)
   packages (>= 0)
   postfix (~> 3.4.0)

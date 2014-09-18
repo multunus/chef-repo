@@ -184,7 +184,7 @@ Replace `>> your server address <<` with the domain name or ip address of your s
 
 ##### Forwarding ssh agent 
 
-Add the following to ~/.ssh/config
+Add the following to **~/.ssh/config**
 
 ```
 Host < host_name >

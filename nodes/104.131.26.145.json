@@ -17,7 +17,13 @@
         }
     },
     "newrelic":{
-        "license_key" : "< new_relic_license_key >"
+        "license" : "< new_relic_license_key >"
+    },
+    "fail2ban": {
+        "ignoreip": "127.0.0.1/8",
+        "findtime": 600,
+        "bantime":  300,
+        "maxretry": 5
     },
     "ssh_deploy_keys": [
         " ssh_public_key for easy deployment "

@@ -182,6 +182,18 @@ server '>> your server address <<', user: 'deploy', roles: %w{web app db}
 
 Replace `>> your server address <<` with the domain name or ip address of your server.
 
+##### Forwarding ssh agent 
+
+Add the following to **~/.ssh/config**
+
+```
+Host < host_name >
+  IdentityFile ~/id_rsa
+  HostName < host_name >
+  ForwardAgent yes
+
+```
+
 To verify that everything is set up correctly run:
 
 ```sh

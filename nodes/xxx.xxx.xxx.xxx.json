@@ -48,7 +48,7 @@
                 "key": "" 
             },
             "domain_names": [
-                "< domain_name >"
+                "xxx.xxx.xxx.xxx"
             ],
             "ruby_version": "< ruby version to install >",
             "database_info": {

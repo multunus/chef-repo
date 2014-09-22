@@ -24,3 +24,11 @@ cookbook 'newrelic', '~> 2.0.0'
 # for setting advanced options:
 # https://github.com/opscode-cookbooks/fail2ban
 cookbook 'fail2ban', '~> 2.2.0' 
+
+# for setting advanced options:
+# https://github.com/wk8/cookbook-diptables
+cookbook 'diptables', '~> 0.1.6'
+
+# for setting advanced options:
+# https://github.com/chr4-cookbooks/sshd
+cookbook 'sshd', '~> 1.1.1'

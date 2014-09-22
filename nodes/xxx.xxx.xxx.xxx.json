@@ -2,7 +2,11 @@
     "run_list": [
         "role[postgresql]",
         "role[rails_passenger]",
-	"recipe[newrelic]"
+	"recipe[newrelic]",
+        "recipe[fail2ban]",
+	"recipe[iptables]",
+	"recipe[diptables]",
+	"recipe[sshd]"
     ],
     "postgresql": {
         "password": {
@@ -25,6 +29,16 @@
         "bantime":  300,
         "maxretry": 5
     },
+    "iptables":{
+       "notes": "please refer vendor/cookbooks/iptables/recipe/default.rb"
+    },
+    "sshd":{
+        "sshd_config":{
+            "Port": 47865,
+            "PermitRootLogin": "no",
+            "PasswordAuthentication": "no"
+        }
+    },
     "ssh_deploy_keys": [
         " ssh_public_key for easy deployment "
     ],
@@ -36,12 +50,7 @@
             "rails_env": "staging",
             "packages": [
                 "nodejs",
-                "imagemagick",
-                "libmagickwand-dev",
-                "postgresql-contrib",
-                "texlive-binaries",
-                "texlive-extra-utils",
-                "librsvg2-bin"
+                "postgresql-contrib"
             ],
             "ssl_info": {
                 "crt": "",

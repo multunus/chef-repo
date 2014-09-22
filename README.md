@@ -1,111 +1,97 @@
-Intercity Chef Recipes
-======================
+## Name goes here. Come up with a good one :]
 
-This Chef repository aims at being the easiest way set up and configure your own Rails server
-to host one or more Ruby on Rails applications using best
-practices from our community.
+This Chef repository which builds on top of [intercity/chef-repo](https://github.com/intercity/chef-repo) will help you configure your own Rails server to host one or more Ruby on Rails applications using best practices from our community. All you need for that is access to the host and a little bit of patience.
 
-The configuration is heavily inspired by blog posts and chef recipes
-from [37signals](http://37signals.com) and the
-[Opscode Community Cookbooks](http://community.opscode.com).
-
-## Features
-
-Takes care of automatic installation and configuration of the following software
-on a single server or multiple servers:
+### Features  
+  
+The listed services/softwares will be automatically installed and configured.
 
 * nginx webserver
 * Passenger or Unicorn for running Ruby on Rails
-* Multiple apps on one server
 * Database creation and password generation
 * Easy SSL configuration
+* Configure fail2ban
+* Easy configuration of iptables
+* Server monitoring with Newrelic
 * Deployment with Capistrano
 * Configure ENV variables
 
-### Ubuntu versions
+After a successful run, you will have a decent production ready server up and running.
 
-* Ubuntu 12.04 LTS
-* Ubuntu 14.04 LTS
+### Operating Systems  
+* Ubuntu 12.04/14.04 recommended
 
-### Databases
-
+### Databases Supported
 * MySQL
 * PostgreSQL
 
-## Getting started
+## Getting Started 
 
-The following paragraphs will guide you to set up your own server to host Ruby on Rails applications.
+The following steps wil guide you to set up your own appplication server.
 
 ### 1. Set up this repository
 
-Clone the repository onto your own workstation. For example in your `~/Code` directory:
+Clone this repository to your workstation.
 
-```sh
-$ cd ~/Code
-$ git clone git://github.com/intercity/chef-repo.git chef_repo
+```
+mkdir chef-repo
+git clone git@github.com:multunus/chef-repo.git chef-repo
+```
+Create a new gemset if you feel like, then 
+
+```
+bundle install 
 ```
 
-Run bundle:
+### 2. Set up server for Chef.
 
-```sh
-$ bundle install
+Run the following command. This will install Chef on the remote machine and will prepare the server for installation of our cookbooks
+
 ```
-
-### 2. Install your server
-
-Use the following command to install Chef on your server and prepare it to be installed by these cookbooks:
-
-```sh
 bundle exec knife solo prepare <your user>@<your host/ip>
 ```
 
-This will create a file
+This command will also generate a file `node/<your host/ip>.json`. Copy the contents of `node/sample_json.json` to this file. 
 
+### 3. Generate ssh-keys
+Lets generate ssh keys for this remote host, if you already have this, skip this step
+
+* Please follow this [tutorial by github](https://help.github.com/articles/generating-ssh-keys). 
+* Copy the public key and paste it into the remote servers ~/.ssh/authorised_keys file.
+* Copy the same key into the array under `ssh_deploy_keys` in `<your host/ip>.json`
+
+### 4. Cook your server with Chef
+
+Replace teh values between `<>` with the corresponding values. For more details about the configurations, take a look at **Available Configurations** section.  
+Run:
 ```
-nodes/<your host/ip>.json
-```
-
-Now copy the the contents from the `nodes/sample_host.json` from this repository into this new file. Replace the sample values between `< >` with the values for your server and applications.
-
-When this is done. Run the following command to start the full installation of your server:
-
-```sh
 bundle exec knife solo cook <your user>@<your host/ip>
 ```
 
-### 3. Deploy your application
+This will install all that you have specified in the `<your host/ip>.json` file. Once Chef has completed, you need to deploy your application code. 
 
-You can deploy your applications with Capistrano.
+### 5. Deployment
 
-Create a file named `.ruby-version` in your Rails project with the Ruby version you want your application ro un on:
-
+We have chosen [Capistrano](http://capistranorb.com/) as our deployment tool.
+Navgate to your Rails applications folder.  
+  
+  In Gemfile add: 
 ```
-echo "2.1.2" > .ruby-version
-```
-
-Add the Capistrano gem to your Gemfile:
-
-```ruby
-# your other gems..
-
 gem 'capistrano', '~> 3.2.1'
 gem 'capistrano-rails', '~> 1.1'
 ```
-
-And run bundle to install it:
-
-```ruby
-bundle
+Run:
+```
+$ bundle install
 ```
 
-Now generate configuration files for Capistrano:
+Capify: make sure there's no "Capfile" or "capfile" present:
 
-```sh
-bundle exec cap install
+```
+$ bundle exec cap install
 ```
 
-This command will generate the following files in your application:
-
+Capify will generate the following files in your directory:  
 ```
 Capfile
 config/deploy.rb
@@ -113,74 +99,110 @@ config/deploy/production.rb
 config/deploy/staging.rb
 ```
 
-Edit the file `Capfile` and change it's contents to:
+Replace the contents of `Capfile` with:
 
-```ruby
-# Load DSL and Setup Up Stages
+```
 require 'capistrano/setup'
 
-# Includes default deployment tasks
 require 'capistrano/deploy'
 
 require 'capistrano/rails'
 
-# Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
 ```
 
-Then edit `config/deploy.rb` and change it to the sample below.
-Replace `>> your git repo_url <<` with the SSH clone URL of your repository:
+Then edit `config/deploy.rb`, replace the contents with:
 
-```ruby
-# config valid only for Capistrano 3.2.1
-lock '3.2.1'
+```
+set :application, '<application_name>'
+set :deploy_user, '<user you have added to sudoers group in node json file>'
 
-set :application, '>> your_application_name <<'
-set :repo_url, '>> your git repo_url <<'
+set :deploy_to, "~/#{fetch(:application)}"
 
-# Default branch is :master
-# Uncomment the following line to have Capistrano ask which branch to deploy.
-# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
-
-# Replace the sample value with the name of your application here:
-set :deploy_to, '/u/apps/>> your_application_name <<_production'
-
-# Use agent forwarding for SSH so you can deploy with the SSH key on your workstation.
 set :ssh_options, {
-  forward_agent: true
+  keys: "path to authorised key",
+  forward_agent: true,
+  port: <port to be used for deployment.>
 }
 
-# Default value for :pty is false
+set :scm, :git
+set :repo_url, '<git_repository_url>'
+set :branch, "master"
 set :pty, true
 
-set :linked_files, %w{config/database.yml .rbenv-vars}
+set :linked_files, %w{config/database.yml}
 set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 set :default_env, { path: "/opt/rbenv/shims:$PATH" }
-
 set :keep_releases, 5
-
 namespace :deploy do
+
+  before  'assets:precompile', 'migrate'
 
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      execute :touch, release_path.join('tmp/restart.txt')
+       execute :touch, release_path.join('tmp/restart.txt')
     end
   end
 
-  after :publishing, :restart
-
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+    end
+  end
+  after 'deploy:publishing', 'deploy:restart'
 end
+
 ```
 
-Replace the contents of `config/deploy/production.rb` with
-
-```ruby
-server '>> your server address <<', user: 'deploy', roles: %w{web app db}
+Replace the contents of `config/deploy/production.rb` with:
 ```
+server '<your server address>', user: 'deploy', roles: %w{web app db}
+```
+### 7. Creating ssl certificates
+### TBD: hstore
+### 
 
-Replace `>> your server address <<` with the domain name or ip address of your server.
+### X. Available Configurations
+These are the main configuration options available under `<your host/ip>.json`.
+#### run_list
+This expects an array of roles or recipes which defines all of the configuration settings that are necessary for a node(machine) that is under management by Chef. The recipes are run in the same order they are added under `run_list`
+```
+    {
+      "run_list" : [
+        "role[postgresql]"
+        "recipe[newrelic]"
+      ]
+    }
+
+```
+#### authorization
+Adding a user under this adds the user to sudoers group.
+
+#### newrelic
+Depends on [escapestudios-cookbooks/newrelic](https://github.com/escapestudios-cookbooks/newrelic) and is added to Cheffile. Just adding the **license** setsup newrelic with minimal configurations. For advanced settings refer the above given repository.
+
+#### fail2ban
+Depends on [opscode-cookbooks/fail2ban](https://github.com/opscode-cookbooks/fail2ban). Any of the default values given in the above cookbook under default attributes can be overridden by adding it into `fail2ban` key under node json file.
+
+#### iptables
+Depends on [wk8/cookbook-diptables](https://github.com/wk8/cookbook-diptables). As mentioned in node json, please refer vendor/cookbooks/iptables/recipes/default.rb
+
+#### sshd
+Depends on [chr4-cookbooks/sshd](https://github.com/chr4-cookbooks/sshd). Any configurations under **/etc/ssh/sshd_config** can be overridden by adding it under `sshd[:sshd_config]`.
+
+```
+    {
+        "sshd":{
+            "sshd_config"{
+                "Port" : 56987
+            }
+        }
+    }
+```
+Here it overrides default ssh port 22 with 56987.
+#### active_applications
+Applications that needs to be started under a host.
 
 ##### Forwarding ssh agent 
 
@@ -194,51 +216,3 @@ Host < host_name >
 
 ```
 
-To verify that everything is set up correctly run:
-
-```sh
-bundle exec cap production deploy:check
-```
-
-Finally to deploy, run:
-
-```sh
-bundle exec cap production deploy
-```
-
-This will deploy your app and run your database migrations.
-
-**Congratulations!** You've now deployed your application. Browse to your application in your webbrowser and everything should work!
-
-## Try these cookbooks with Vagrant
-
-You can use Vagrant to experience how easy it is to install your servers with this repository.
-
-First, install Vagrant from http://vagrantup.com. Then install the following two Vagrant plugins:
-
-```
-vagrant plugin install vagrant-librarian-chef
-vagrant plugin install vagrant-omnibus
-```
-
-Finally, start a Vagrant machine with a sample server configuration:
-
-```
-vagrant up mysql
-```
-
-This will boot a local Ubuntu virtual machine and install it so you can deploy Ruby on Rails applications that use MySQL as the database.
-
-You can check out the sample configuration in file `Vagrantfile`
-
-## When you run into problems:
-
-These steps should let you **set up or test your own Rails infrastructure
-in 5 - 10 minutes**. If something doesn't work or you need more instructions:
-
-**Please!** [Open an issue](https://github.com/intercity/chef-repo/issues) or email [hello@intercityup.com](mailto:hello@intercityup.com).
-
-## Resources and original authors
-
-* Most of the cookbooks that are used in this repository are installed from the [Opscode Community Cookbooks](http://community.opscode.com).
-* The `rails` and `bluepill` configuration is based off the cookbooks by [jsierles](https://github.com/jsierles) at https://github.com/jsierles/chef_cookbooks

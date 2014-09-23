@@ -1,4 +1,4 @@
-## Name goes here. Come up with a goog one :]
+## Name goes here. Come up with a good one :]
 
 This Chef repository which builds on top of [intercity/chef-repo](https://github.com/intercity/chef-repo) will help you configure your own Rails server to host one or more Ruby on Rails applications using best practices from our community. All you need for that is access to the host and a little bit of patience.
 

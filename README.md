@@ -1,4 +1,4 @@
-## Name goes here. Come up with a good one :]
+## Name goes here. Come up with a goog one :]
 
 This Chef repository which builds on top of [intercity/chef-repo](https://github.com/intercity/chef-repo) will help you configure your own Rails server to host one or more Ruby on Rails applications using best practices from our community. All you need for that is access to the host and a little bit of patience.
 
@@ -24,6 +24,8 @@ After a successful run, you will have a decent production ready server up and ru
 ### Databases Supported
 * MySQL
 * PostgreSQL
+
+*Note* : PostgreSQL is configured to have hstore extension enabled.
 
 ## Getting Started 
 
@@ -57,12 +59,12 @@ This command will also generate a file `node/<your host/ip>.json`. Copy the cont
 Lets generate ssh keys for this remote host, if you already have this, skip this step
 
 * Please follow this [tutorial by github](https://help.github.com/articles/generating-ssh-keys). 
-* Copy the public key and paste it into the remote servers ~/.ssh/authorised_keys file.
-* Copy the same key into the array under `ssh_deploy_keys` in `<your host/ip>.json`
+* Copy the public key into the array under `ssh_deploy_keys` in `<your host/ip>.json`
+* This key will be copied over to the remote servers ~/.ssh/authorised_keys file.
 
 ### 4. Cook your server with Chef
 
-Replace teh values between `<>` with the corresponding values. For more details about the configurations, take a look at **Available Configurations** section.  
+Replace the values between `<>` with the corresponding values. For more details about the configurations, take a look at **Available Configurations** section.  
 Run:
 ```
 bundle exec knife solo cook <your user>@<your host/ip>
@@ -103,9 +105,7 @@ Replace the contents of `Capfile` with:
 
 ```
 require 'capistrano/setup'
-
 require 'capistrano/deploy'
-
 require 'capistrano/rails'
 
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
@@ -160,10 +160,15 @@ Replace the contents of `config/deploy/production.rb` with:
 server '<your server address>', user: 'deploy', roles: %w{web app db}
 ```
 ### 7. Creating ssl certificates
-### TBD: hstore
-### 
+  
+  If you have already bought SSL certificates, do 
+*   Copy the contents of `crt` and `key` file into `templates/default/ app_cert.crt.erb` and  `templates/default/app_cert.key.erb` under `vendor/cookbook/rails`.
+*   These will be copied to remote server and configured to be used with nginx.
 
-### X. Available Configurations
+If you want to go with self-signed certificate, you can find a fantastic [how-to](https://www.digitalocean.com/community/tutorials/how-to-create-a-ssl-certificate-on-nginx-for-ubuntu-12-04) written by Etel Sverdlov of DigitalOcean.
+
+
+### 8. Available Configurations
 These are the main configuration options available under `<your host/ip>.json`.
 #### run_list
 This expects an array of roles or recipes which defines all of the configuration settings that are necessary for a node(machine) that is under management by Chef. The recipes are run in the same order they are added under `run_list`
@@ -204,15 +209,6 @@ Here it overrides default ssh port 22 with 56987.
 #### active_applications
 Applications that needs to be started under a host.
 
-##### Forwarding ssh agent 
-
-Add the following to **~/.ssh/config**
-
-```
-Host < host_name >
-  IdentityFile ~/id_rsa
-  HostName < host_name >
-  ForwardAgent yes
-
-```
-
+### 9. When you run into troubles.
+Feel free to **raise an issue**. In an ideal scenario this will help you set up your Rails infrastructure in under 15 minutes. But as always, [*anything that can go wrong, will go wrong*](http://en.wikipedia.org/wiki/Murphy's_law)  
+:)

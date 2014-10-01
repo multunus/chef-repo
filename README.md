@@ -60,7 +60,7 @@ Lets generate ssh keys for this remote host, if you already have this, skip this
 
 * Please follow this [tutorial by github](https://help.github.com/articles/generating-ssh-keys). 
 * Copy the public key into the array under `ssh_deploy_keys` in `<your host/ip>.json`
-* This key will be copied over to the remote servers ~/.ssh/authorised_keys file.
+* This key will be copied over to the remote servers ~/.ssh/authorised_keys file for the user configured to have sudo in `node/<your host/ip>.json`.
 
 ### 4. Cook your server with Chef
 

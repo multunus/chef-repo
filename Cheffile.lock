@@ -32,7 +32,12 @@ SITE
   specs:
     apt (2.5.2)
     chef_handler (1.1.6)
+    diptables (0.1.6)
+      chef_handler (>= 0.0.0)
     dmg (2.2.0)
+    fail2ban (2.2.0)
+      yum (~> 3.0)
+      yum-epel (>= 0.0.0)
     git (4.0.2)
       build-essential (>= 0.0.0)
       dmg (>= 0.0.0)
@@ -40,8 +45,10 @@ SITE
       windows (>= 0.0.0)
       yum (~> 3.0)
       yum-epel (>= 0.0.0)
+    monit (0.7.4)
     mysql (5.3.6)
       yum-mysql-community (>= 0.0.0)
+    newrelic (2.0.0)
     nginx (2.7.4)
       apt (~> 2.2)
       bluepill (~> 2.3)
@@ -60,11 +67,24 @@ SITE
       git (>= 0.0.0)
       ohai (>= 1.1)
     ruby_build (0.8.0)
+    sshd (1.1.1)
     sudo (2.7.0)
     windows (1.34.2)
       chef_handler (>= 0.0.0)
     yum-mysql-community (0.1.10)
       yum (>= 3.0)
+
+PATH
+  remote: vendor/cookbooks/imonit
+  specs:
+    imonit (0.1.0)
+      monit (~> 0.7.4)
+
+PATH
+  remote: vendor/cookbooks/iptables
+  specs:
+    iptables (0.1.0)
+      sudo (> 1.2.0)
 
 PATH
   remote: vendor/cookbooks/packages
@@ -88,7 +108,13 @@ PATH
 
 DEPENDENCIES
   apt (~> 2.5.2)
+  diptables (~> 0.1.6)
+  fail2ban (~> 2.2.0)
+  imonit (>= 0)
+  iptables (>= 0)
+  monit (~> 0.7.4)
   mysql (~> 5.3.6)
+  newrelic (~> 2.0.0)
   nginx (~> 2.7.4)
   packages (>= 0)
   postfix (~> 3.4.0)
@@ -97,5 +123,6 @@ DEPENDENCIES
   rbenv (~> 1.7.1)
   ruby_build (~> 0.8.0)
   ssh_deploy_keys (>= 0)
+  sshd (~> 1.1.1)
   sudo (~> 2.7.0)
 

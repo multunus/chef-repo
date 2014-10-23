@@ -15,4 +15,26 @@ cookbook "ruby_build", "~> 0.8.0"
 # Our own cookbooks from vendor/
 cookbook "packages", path: "vendor/cookbooks/packages"
 cookbook "rails", path: "vendor/cookbooks/rails"
+cookbook "iptables", path: "vendor/cookbooks/iptables"
+cookbook "imonit", path: "vendor/cookbooks/imonit"
 cookbook "ssh_deploy_keys", path: "vendor/cookbooks/ssh_deploy_keys"
+
+# for setting advanced options:
+# https://github.com/escapestudios-cookbooks/newrelic
+cookbook 'newrelic', '~> 2.0.0'
+
+# for setting advanced options:
+# https://github.com/opscode-cookbooks/fail2ban
+cookbook 'fail2ban', '~> 2.2.0' 
+
+# for setting advanced options:
+# https://github.com/wk8/cookbook-diptables
+cookbook 'diptables', '~> 0.1.6'
+
+# for setting advanced options:
+# https://github.com/chr4-cookbooks/sshd
+cookbook 'sshd', '~> 1.1.1'
+
+# Source at
+# http://github.com/apsoto/monit
+cookbook 'monit', '~> 0.7.4'

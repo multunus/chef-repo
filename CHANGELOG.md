@@ -2,16 +2,19 @@
 All notable changes to this project will be documented in this file.
 This project makes use of the [Sementic Versioning](http://semver.org/)
 
-## Master - TBA
+## 2.2.0 - TBA
 
 ### Added
-- Nothing
+- Backup support (Support for filesystem, mysql and postgresql, backup to S3)
+- Backup compression using GZip
+- Added ruby 2.1.3 to the ruby binary list
+- test-kitchen to automatically test the cookbooks and resulting server setup
 
 ### Deprecated
 - Nothing
 
 ### Removed
-- Nothing
+- Removed the sudos cookbook because it is not needed for the Unicorn stack anymore
 
 ### Fixed
 - Removed spaces from the .rbenv-vars template file

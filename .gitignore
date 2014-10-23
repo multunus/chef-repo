@@ -1,12 +1,20 @@
 .rake_test_cache
 recipes.tgz
 /config/servers.rb
-bin/
 
 nodes/*.json
 !nodes/sample_host.json
 /cookbooks
+/certificates
 /tmp
 .vagrant
 
 .bundle/install.log
+.bundle
+
+.kitchen
+.kitchen/
+.kitchen.local.yml
+.librarian
+
+.rbenv-vars

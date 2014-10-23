@@ -1,0 +1,7 @@
+include_recipe "main::monit"
+
+monitrc "monit-nginx"
+r = resources(:template => "/etc/monit/conf.d/monit-nginx.conf")
+r.cookbook "main"
+
+service "monit"

@@ -1,71 +1,124 @@
-## Name goes here. Come up with a goog one :]
+Chef Playbook 
 
-This Chef repository which builds on top of [intercity/chef-repo](https://github.com/intercity/chef-repo) will help you configure your own Rails server to host one or more Ruby on Rails applications using best practices from our community. All you need for that is access to the host and a little bit of patience.
+![image alt text](image_0.jpg)
 
-### Features  
-  
-The listed services/softwares will be automatically installed and configured.
+Integrating Chef to your project.
 
-* nginx webserver
-* Passenger or Unicorn for running Ruby on Rails
-* Database creation and password generation
-* Easy SSL configuration
-* Configure fail2ban
-* Easy configuration of iptables
-* Server monitoring with Newrelic
-* Deployment with Capistrano
-* Configure ENV variables
+Assumptions:
 
-After a successful run, you will have a decent production ready server up and running.
+* Your server ip address is :* IPADRESS*
 
-### Operating Systems  
-* Ubuntu 12.04/14.04 recommended
+Option 1 (The easy way) :
 
-### Databases Supported
-* MySQL
-* PostgreSQL
+1. Clone chef-repo from [multunus/chef-repo](https://github.com/multunus/chef-repo) into your project.
 
-*Note* : PostgreSQL is configured to have hstore extension enabled.
+2. Remove any traces of git from this directory by doing [rm -rf .git](http://stackoverflow.com/questions/3212459/is-there-a-command-to-undo-git-init)
 
-## Getting Started 
+3. Check in the directory into parent projects version control.
 
-The following steps wil guide you to set up your own appplication server.
+Option 2 (The hard way) :
 
-### 1. Set up this repository
+1. Clone chef-repo as a git submodule.
 
-Clone this repository to your workstation.
+2. Write scripts to copy in:
 
-```
-mkdir chef-repo
-git clone git@github.com:multunus/chef-repo.git chef-repo
-```
-Create a new gemset if you feel like, then 
+    1. *IPADDRESS.json *
 
-```
-bundle install 
-```
+    2. *SSL Certificates*
 
-### 2. Set up server for Chef.
+every time chef-solo is invoked (remove these files once this is done).
 
-Run the following command. This will install Chef on the remote machine and will prepare the server for installation of our cookbooks
+**General Steps**
 
-```
-bundle exec knife solo prepare <your user>@<your host/ip>
-```
+Section A: Get a server
 
-This command will also generate a file `node/<your host/ip>.json`. Copy the contents of `node/sample_json.json` to this file. 
+1. While getting a server from any vendor, make sure to[ set it up with pem file access](http://serverfault.com/questions/546033/how-do-i-set-up-a-pem-login-for-my-servers), for a detailed how-to, head over to *["How will I set up ssh-access for my server*"](http://www.beginninglinux.com/home/server-administration/openssh-keys-certificates-authentication-pem-pub-crt)
 
-### 3. Generate ssh-keys
-Lets generate ssh keys for this remote host, if you already have this, skip this step
+2. While getting a server from amazon, make sure to open default port 22 in amazon firewall. (The firewall restricts inbound traffic. Even if you did set up your server, unless you open port 80, you wont be able to see your server in action.). For a detailed how to, head over to *["How do i authorize inbound traffic in aws-ec2*"](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/authorizing-access-to-an-instance.html)
 
-* Please follow this [tutorial by github](https://help.github.com/articles/generating-ssh-keys). 
-* Copy the public key into the array under `ssh_deploy_keys` in `<your host/ip>.json`
-* This key will be copied over to the remote servers ~/.ssh/authorised_keys file.
+Now we have got a server with ip *IPADRESS, *lets take a detour and take a look at some tools which makes working with chef-projects a piece of cake.
 
-### 4. Cook your server with Chef
+Section B: Meet knife solo.
 
-Replace the values between `<>` with the corresponding values. For more details about the configurations, take a look at **Available Configurations** section.  
-Run:
+	[Knife-solo](http://matschaffer.github.io/knife-solo/) is a tool that helps to run Chef-solo in a remote server in a way similar to a Chef-server. It also helps set up our remote server with chef-solo. 
+
+	Knife-solo should not be confused with Knife, a command-line-tool that comes with Chef which is used to *"provide an interface between a local chef-repo and Chef-server".*
+
+Section C: Librarian-chef
+
+	The bundler of Chef projects. Librarian-chef, like bundler, has a Cheffile which is very similar to Gemfile where we declare the external cookbooks that we use. Hey, also like [rubygems.org](https://rubygems.org/), chef has [supermarket.getchef.com](https://supermarket.getchef.com/).
+
+Here's an example Cheffile:
+
+site "https://supermarket.getchef.com/api/v1"
+
+cookbook "ntp"
+cookbook "timezone", "0.0.1"
+
+cookbook "rvm",
+  :git => "https://github.com/fnichol/chef-rvm",
+  :ref => "v0.7.1"
+
+cookbook "cloudera",
+  :path => "vendor/cookbooks/cloudera-cookbook"
+
+**Some useful commands:**
+
+*bundle exec librarian-chef install --clean** :* This command does a clean install (clears teh cache) of cookbooks to the cookbooks-path, defined in knife.rb.
+
+*bundle exec librarian-chef install --clean --verbose** : *This command can come in handy while debugging a misbehaving cookbook installation.
+
+For more detailed reading, visit  [librarian-chef home page](https://github.com/applicationsonline/librarian-chef).
+
+Now that we had our introductions, lets see how to set up a server.
+
+Section D: knife solo prepare
+
+1. Inside *"chef-repo"* folder, 
+
+    1. Run 
+
+        1. "bundle install", for installing Chef-project dependencies. A separate gemset would be ideal for this.
+
+        2. "bundle exec knife solo prepare root@IPADDRESS -i <path to the pemfile for the server>"
+
+           
+
+	This will create *IPADDRESS.json *file inside *chef-repo/nodes *directory. During this step knife installs Chef-solo on the remote machine and configures it.
+
+Section E: What should I do with *IPADDRESS.json* file?
+
+	For each server (a node), knife-solo creates a json file with the ipaddress of the server. This file in essence contains values with which Chef-solo will be executed in the server. These values are called *"node variables". *[It is highly recommended to read about node variables at this time](https://docs.getchef.com/chef_overview_attributes.html).
+
+Navigate to *"chef-repo/node" *and open 127.0.0.1.json.
+
+1. *run_list*: The sequence in which cookbooks/roles will be run
+
+2. *postgres: *Configurations for [postgresql server external cookbook](https://supermarket.getchef.com/cookbooks/postgresql).
+
+3. nginx: Settings for compiling nginx from source. If you remove this key, nginx will be installed from package control (*eg: apt*). * *For available setting options, visit [nginx external cookbook](https://github.com/midhunkrishna/nginx).
+
+4. *authorization:* The values is used by recipe in "*chef-repo/vendor/cookbooks/rails/recipe/setup*" for setting up a deploy user.
+
+5. *newrelic*: Licence key for newrelic, consult Cheffile for cookbok source.
+
+6. *sshd*: Configurations for ssh. Disables root login altogether. Removes password login too. Enables user *"deploy"* for ssh login.
+
+7. *ssh_deply_keys*: This will be copied into */home/deploy/.ssh/known_hosts *of the remote server. This avoids manual configuration of keys for deploy user.
+
+8. *active_applications*:
+
+    1. *rewrite_to_https*: This key when set to true, rewrites connections at http to https. This will be configured in site specific configuration in "*nginx/sites-available"*.
+
+    2. *domain_names*: Will be added as parameters to "server_name" directive in nginx/sites-available.
+
+Section F: Set up my server
+
+1. Inside chef-repo folder do,
+
+    1. run "bundle exec knife "
+
+
 ```
 bundle exec knife solo cook <your user>@<your host/ip>
 ```

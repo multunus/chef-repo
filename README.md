@@ -90,9 +90,9 @@ Navigate to *"chef-repo/node" *and open 127.0.0.1.json.
 
 1. *run_list*: The sequence in which cookbooks/roles will be run
 
-2. *postgres: *Configurations for [postgresql server external cookbook](https://supermarket.getchef.com/cookbooks/postgresql).
+2. *postgres*: Configurations for [postgresql server external cookbook](https://supermarket.getchef.com/cookbooks/postgresql).
 
-3. nginx: Settings for compiling nginx from source. If you remove this key, nginx will be installed from package control (*eg: apt*). * *For available setting options, visit [nginx external cookbook](https://github.com/midhunkrishna/nginx).
+3. *nginx*: Settings for compiling nginx from source. If you remove this key, nginx will be installed from package control (*eg: apt*). * *For available setting options, visit [nginx external cookbook](https://github.com/midhunkrishna/nginx).
 
 4. *authorization:* The values is used by recipe in "*chef-repo/vendor/cookbooks/rails/recipe/setup*" for setting up a deploy user.
 

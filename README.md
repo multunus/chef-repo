@@ -30,9 +30,9 @@ every time chef-solo is invoked (remove these files once this is done).
 
 ####Get a server
 
-1. While getting a server from any vendor, make sure to[ set it up with pem file access](http://serverfault.com/questions/546033/how-do-i-set-up-a-pem-login-for-my-servers), for a detailed how-to, head over to *["How will I set up ssh-access for my server*"](http://www.beginninglinux.com/home/server-administration/openssh-keys-certificates-authentication-pem-pub-crt)
+1. While getting a server from any vendor, make sure to[set it up with pem file access](http://serverfault.com/questions/546033/how-do-i-set-up-a-pem-login-for-my-servers), for a detailed how-to, head over to ["How will I set up ssh-access for my server"](http://www.beginninglinux.com/home/server-administration/openssh-keys-certificates-authentication-pem-pub-crt)
 
-2. While getting a server from amazon, make sure to open default port 22 in amazon firewall. (The firewall restricts inbound traffic. Even if you did set up your server, unless you open port 80, you wont be able to see your server in action.). For a detailed how to, head over to *["How do i authorize inbound traffic in aws-ec2*"](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/authorizing-access-to-an-instance.html)
+2. While getting a server from amazon, make sure to open default port 22 in amazon firewall. (The firewall restricts inbound traffic. Even if you did set up your server, unless you open port 80, you wont be able to see your server in action.). For a detailed how to, head over to ["How do i authorize inbound traffic in aws-ec2"](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/authorizing-access-to-an-instance.html)
 
 Now we have got a server with ip *IPADRESS, *lets take a detour and take a look at some tools which makes working with chef-projects a piece of cake.
 
@@ -84,7 +84,7 @@ This will create *IPADDRESS.json *file inside *chef-repo/nodes *directory. Durin
 
 #### What should I do with *IPADDRESS.json* file?
 
-For each server (a node), knife-solo creates a json file with the ipaddress of the server. This file in essence contains values with which Chef-solo will be executed in the server. These values are called *"node variables". *[It is highly recommended to read about node variables at this time](https://docs.getchef.com/chef_overview_attributes.html).
+For each server (a node), knife-solo creates a json file with the ipaddress of the server. This file in essence contains values with which Chef-solo will be executed in the server. These values are called *"node variables". [It is highly recommended to read about node variables at this time](https://docs.getchef.com/chef_overview_attributes.html).
 
 Navigate to *"chef-repo/node" *and open 127.0.0.1.json.
 

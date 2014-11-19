@@ -1,0 +1,94 @@
+{
+    "run_list": [
+        "role[postgresql]",
+        "role[rails_passenger]",
+	"recipe[newrelic]",
+        "recipe[fail2ban]",
+	"recipe[iptables]",
+	"recipe[diptables]",
+	"recipe[sshd]"
+    ],
+    "postgresql": {
+        "password": {
+            "postgres": "password"
+        }
+    },
+    "nginx": {
+        "init_style": "init.d",
+        "install_method": "source",
+        "source":{
+            "modules":[
+	        "nginx::passenger",
+		"nginx::pagespeed"
+            ]
+        }
+    },
+    "authorization": {
+        "sudo": {
+            "users": [
+                "deploy"
+            ]
+        }
+    },
+    "newrelic": {
+        "license": "newrelic_licence_key"
+    },
+    "fail2ban": {
+        "ignoreip": "127.0.0.1/8",
+        "findtime": 600,
+        "bantime": 300,
+        "maxretry": 5
+    },
+    "iptables": {
+        "note": "ssh port 47865, please refer vendor/cookbooks/iptables/recipe/default.rb"
+    },
+    "monit":{
+	"mail_format":{
+		"to" : "project-dev@company.com"
+	}
+    },
+    "sshd": {
+        "sshd_config": {
+            "Port": 1234,
+            "PermitRootLogin": "no",
+            "PasswordAuthentication": "no"
+        }
+    },
+    "ssh_deploy_keys": [
+        "the_public_key"
+    ],
+    "rails": {
+        "applications_root": "/home/deploy"
+    },
+    "active_applications": {
+        "bidpress_production": {
+            "rails_env": "production",
+            "packages": [
+                "nodejs",
+                "libmagickwand-dev",
+                "postgresql-contrib",
+                "texlive-binaries",
+                "texlive-extra-utils",
+                "librsvg2-bin",
+                "monit"
+            ],
+            "rewrite_to_https": true,
+            "ssl_info": {
+                "crt": "",
+                "key": ""
+            },
+            "domain_names": [
+                "www.project.com",
+                "project.com"
+            ],
+            "ruby_version": "2.1.2",
+            "database_info": {
+                "adapter": "postgresql",
+                "host": "localhost",
+                "username": "project",
+                "password": "password!",
+                "database": "project_production"
+            }
+        }
+    }
+}

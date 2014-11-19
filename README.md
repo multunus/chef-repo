@@ -4,7 +4,7 @@
 Integrating Chef to your project.
 
 #####Assumptions:
-* Your server ip address is :* IPADRESS*
+* Your server ip address is : *IPADDRESS*
 
 ######Option 1 (The easy way) :
 

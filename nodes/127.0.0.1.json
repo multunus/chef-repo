@@ -61,7 +61,7 @@
         "applications_root": "/home/deploy"
     },
     "active_applications": {
-        "bidpress_production": {
+        "project_production": {
             "rails_env": "production",
             "packages": [
                 "nodejs",

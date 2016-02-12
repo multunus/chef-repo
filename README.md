@@ -1,5 +1,7 @@
-### Chef Playbook 
+### Chef Playbook
 
+We use the awesome toolchain by chef for our some of our internal deployments.
+This version has been customized according to our needs.
 
 Integrating Chef to your project.
 
@@ -37,7 +39,7 @@ every time chef-solo is invoked (remove these files once this is done).
 Now we have got a server with ip *IPADRESS, *lets take a detour and take a look at some tools which makes working with chef-projects a piece of cake.
 
 ####Meet knife solo.
-[Knife-solo](http://matschaffer.github.io/knife-solo/) is a tool that helps to run Chef-solo in a remote server in a way similar to a Chef-server. It also helps set up our remote server with chef-solo. 
+[Knife-solo](http://matschaffer.github.io/knife-solo/) is a tool that helps to run Chef-solo in a remote server in a way similar to a Chef-server. It also helps set up our remote server with chef-solo.
 
 Knife-solo should not be confused with Knife, a command-line-tool that comes with Chef which is used to *"provide an interface between a local chef-repo and Chef-server".*
 
@@ -45,7 +47,7 @@ Knife-solo should not be confused with Knife, a command-line-tool that comes wit
 
 The bundler of Chef projects. Librarian-chef, like bundler, has a Cheffile which is very similar to Gemfile where we declare the external cookbooks that we use. Hey, also like [rubygems.org](https://rubygems.org/), chef has [supermarket.getchef.com](https://supermarket.getchef.com/).
 
-######Here's an example Cheffile: 
+######Here's an example Cheffile:
 
 ```ruby
 site "https://supermarket.getchef.com/api/v1"   
@@ -72,14 +74,14 @@ Now that we had our introductions, lets see how to set up a server.
 
 #### Knife solo prepare
 
-1. Inside *"chef-repo"* folder, 
-    1. Run 
+1. Inside *"chef-repo"* folder,
+    1. Run
 
         1. "bundle install", for installing Chef-project dependencies. A separate gemset would be ideal for this.
 
         2. "bundle exec knife solo prepare root@IPADDRESS -i <path to the pemfile for the server>"
 
-           
+
 This will create *IPADDRESS.json *file inside *chef-repo/nodes *directory. During this step knife installs Chef-solo on the remote machine and configures it.
 
 #### What should I do with *IPADDRESS.json* file?
@@ -113,14 +115,14 @@ Navigate to *"chef-repo/node" *and open 127.0.0.1.json.
 1. Inside chef-repo folder do,
   1. run `bundle exec knife solo cook root@IPADDRESS -i <path_to_pem_file>`
 
-This will install all that you have specified in the `<your host/ip>.json` file. Once Chef has completed, you need to deploy your application code. 
+This will install all that you have specified in the `<your host/ip>.json` file. Once Chef has completed, you need to deploy your application code.
 
 #### Deployment
 
 We have chosen [Capistrano](http://capistranorb.com/) as our deployment tool.
 Navgate to your Rails applications folder.  
-  
-  In Gemfile add: 
+
+  In Gemfile add:
 ```
 gem 'capistrano', '~> 3.2.1'
 gem 'capistrano-rails', '~> 1.1'
@@ -203,9 +205,39 @@ Replace the contents of `config/deploy/production.rb` with:
 server '<your server address>', user: 'deploy', roles: %w{web app db}
 ```
 #### Creating ssl certificates
-  
-  If you have already bought SSL certificates, do 
+
+  If you have already bought SSL certificates, do
 *   Copy the contents of `crt` and `key` file into `templates/default/ app_cert.crt.erb` and  `templates/default/app_cert.key.erb` under `vendor/cookbook/rails`.
 *   These will be copied to remote server and configured to be used with nginx.
 
 If you want to go with self-signed certificate, you can find a fantastic [how-to](https://www.digitalocean.com/community/tutorials/how-to-create-a-ssl-certificate-on-nginx-for-ubuntu-12-04) written by Etel Sverdlov of DigitalOcean.
+
+## Contributing
+
+See the [CONTRIBUTING] document.
+Thank you, [contributors]!
+
+  [CONTRIBUTING]: CONTRIBUTING.md
+  [contributors]: https://github.com/multunus/chef-repo/graphs/contributors
+
+## License
+
+chef-repo is Copyright (c) 2016 Multunus Software Pvt. Ltd.
+It is free software, and may be redistributed
+under the terms specified in the [LICENSE] file.
+
+  [LICENSE]: /LICENSE
+
+## About
+
+![multunus](https://s3.amazonaws.com/multunus-images/Multunus_Logo_Vector_resized.png)
+
+chef-repo is maintained and funded by Multunus Software Pvt. Ltd.
+The names and logos for Multunus are trademarks of Multunus Software Pvt. Ltd.
+
+We love open source software!
+See [our other projects][community]
+or [hire us][hire] to help build your product.
+
+  [community]: http://www.multunus.com/community?utm_source=github
+  [hire]: http://www.multunus.com/contact?utm_source=github

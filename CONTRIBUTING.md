@@ -1,5 +1,15 @@
 # Contributing guide
 
+We love contributions from everyone.
+By participating in this project,
+you agree to abide by our [code_of_conduct].
+
+  [code_of_conduct]: code_of_conduct.md
+
+We expect everyone to follow the code of conduct
+anywhere in Multunus' project codebases,
+issue trackers, chatrooms, and mailing lists.
+
 Awesome that you want to contribute! We really love it if people help us out!
 
 ## How to contribute
@@ -56,3 +66,16 @@ vagrant up
 If your change is noteable, or might break other people's installations, please add an entry to the changelog.
 The maintainers will make the final decission of the entry goes in the changelog or not, and to what version.
 When you add something to the changelog, it might go in one of 4 categories: Added, Deprecated, Removed or Fixed.
+
+Follow this [style guide][style].
+
+  [style]: https://github.com/thoughtbot/guides/tree/master/style
+
+Push to your fork. Write a [good commit message][commit]. Submit a pull request.
+
+  [commit]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+Others will give constructive feedback.
+This is a time for discussion and improvements,
+and making the necessary changes will be required before we can
+merge the contribution.
